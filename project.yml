@@ -1,0 +1,49 @@
+name: ControlDeck
+options:
+  bundleIdPrefix: com.olayemi
+  deploymentTarget: { macOS: "14.0" }
+settings:
+  base:
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    SWIFT_VERSION: "5.9"
+targets:
+  ControlDeck:
+    type: application
+    platform: macOS
+    sources: [App, Shared]
+    dependencies:
+      - target: ControlDeckWidget
+    info:
+      path: App/Info.plist
+      properties:
+        LSUIElement: true
+        NSAppleEventsUsageDescription: ControlDeck controls Music, Spotify and system appearance.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.olayemi.controldeck
+            CFBundleURLSchemes: [controldeck]
+    entitlements:
+      path: App/ControlDeck.entitlements
+      properties:
+        com.apple.security.automation.apple-events: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.olayemi.controldeck
+        ENABLE_HARDENED_RUNTIME: NO
+  ControlDeckWidget:
+    type: app-extension
+    platform: macOS
+    sources: [Widget, Shared]
+    info:
+      path: Widget/Info.plist
+      properties:
+        CFBundleDisplayName: ControlDeck
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Widget/Widget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.olayemi.controldeck.widget
