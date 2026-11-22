@@ -1,0 +1,17 @@
+name: Build ControlDeck
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install xcodegen && xcodegen generate
+      - run: |
+          xcodebuild -project ControlDeck.xcodeproj -scheme ControlDeck -configuration Release \
+            -derivedDataPath build CODE_SIGN_IDENTITY="-" build
+      - run: |
+          mkdir dmg && cp -R build/Build/Products/Release/ControlDeck.app dmg/ && ln -s /Applications dmg/Applications
+          hdiutil create -volname ControlDeck -srcfolder dmg -ov -format UDZO ControlDeck.dmg
+      - uses: actions/upload-artifact@v4
+        with: { name: ControlDeck, path: ControlDeck.dmg }
